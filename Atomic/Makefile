@@ -6,8 +6,8 @@ EXESRC=atomicdemo.cpp atomicdemo_multivar.cpp
 EXEOBJ=$(EXESRC:.cpp=.o)
 
 INCS=-I.
-CFLAGS = -Wall -std=c++14 -g $(INCS)
-CXXFLAGS = -Wall -std=c++14 -g $(INCS)
+CFLAGS = -Wall -std=c++11 -g $(INCS)
+CXXFLAGS = -Wall -std=c++11 -g $(INCS)
 LDFLAGS = -pthread
 
 EXE = atomicdemo

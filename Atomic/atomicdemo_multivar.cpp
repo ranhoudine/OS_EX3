@@ -1,3 +1,5 @@
+#ifndef ATOMICDEMO_MULTIVAR
+#define ATOMICDEMO_MULTIVAR
 #include <pthread.h>
 #include <cstdio>
 #include <atomic>
@@ -54,3 +56,4 @@ int main(int argc, char** argv)
     
     return 0;
 }
+#endif
