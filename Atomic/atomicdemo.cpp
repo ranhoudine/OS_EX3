@@ -6,7 +6,7 @@
 
 struct ThreadContext {
     std::atomic<int>* atomic_counter;
-    int* bad_counter;
+
 };
 
 
