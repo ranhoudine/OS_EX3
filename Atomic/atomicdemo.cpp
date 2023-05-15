@@ -19,7 +19,6 @@ void* foo(void* arg)
         // in the exercise
         int old_value = (*(tc->atomic_counter))++;
         (void) old_value;  // ignore not used warning
-        (*(tc->bad_counter))++;
     }
     
     return 0;

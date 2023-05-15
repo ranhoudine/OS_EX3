@@ -9,25 +9,32 @@
 #include <vector>
 #include "MapReduceClient.h"
 using std::vector;
-// we'll tackle that later
+using std::atomic;
+using std::pair;
+
+typedef struct ThreadContext
+{
+    JobContext* _jobContext;
+    pthread_t _threadID;
+    IntermediateVec _intermediateVector;
+} ThreadContext;
 
 class JobContext
 {
  public:
   vector<ThreadContext *> _threads;
-  const MapReduceClient* _client;
-  const InputVec* _inputVec;
-  OutputVec* _outputVec;
+  const MapReduceClient &_client;
+  const InputVec &_inputVector;
+  Barrier _barrier;
+  OutputVec& _outputVec;
   int _multiThreadLevel;
 
   JobContext (const MapReduceClient &client,
               const InputVec &inputVec, OutputVec &outputVec,
               int multiThreadLevel);
 
-  void createThreads();
+  void runJob();
 
- private:
-  void initializeJobContext ();
 };
 
 #endif //_JOBCONTEXT_H_

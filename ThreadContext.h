@@ -9,23 +9,19 @@
 #include <atomic>
 #include <utility>
 #include <pthread.h>
-
+#include "JobContext.h"
 #include "Barrier/Barrier.h"  // todo not sure whether this is allowed but
 #include "MapReduceClient.h"
-
-using std::pair;
-using std::vector;
-using std::atomic;
-
-typedef vector<pair<K2 *, V2 *>> IntermediateVector;
-typedef vector<pair<K1 *, V1 *>> InputVector;
-typedef struct ThreadContext
-{
-    pthread_t threadID;
-    Barrier *barrier;
-    InputVector *inputVector;
-    IntermediateVector intermediateVector;
-    atomic<int> *atomicIndex;
-} ThreadContext;
+#include "JobContext.h"
+//using std::vector;
+//using std::atomic;
+//
+//
+//typedef struct ThreadContext
+//{
+//    JobContext* _jobContext;
+//    pthread_t _threadID;
+//    IntermediateVec _intermediateVector;
+//} ThreadContext;
 
 #endif //_THREADCONTEXT_H_

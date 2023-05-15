@@ -25,7 +25,8 @@ void emit2 (K2 *key, V2 *value, void *context)
 }
 void emit3 (K3 *key, V3 *value, void *context)
 {
-  return;
+  OutputVec* outputVec = (OutputVec *) context;
+  outputVec->push_back (OutputPair(key, value));
 }
 
 JobHandle startMapReduceJob (const MapReduceClient &client,
