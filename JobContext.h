@@ -11,12 +11,12 @@
 using std::vector;
 using std::atomic;
 using std::pair;
-
+typedef struct ThreadContext ThreadContext;
 class JobContext
 {
  public:
   vector<IntermediateVec> _shuffled;
-  vector<ThreadContext *> _threads; // todo maybe it would be better to not use pointers here, we'll see
+  vector<ThreadContext> _threads; // todo maybe it would be better to not use pointers here, we'll see
   const MapReduceClient &_client;
   const InputVec &_inputVector;
   Barrier _barrier;

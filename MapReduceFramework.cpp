@@ -55,9 +55,19 @@ void getJobState (JobHandle job, JobState *state)
 }
 void closeJobHandle (JobHandle job)
 {
-  // todo here is where we need to deallocate the memory of the various treadContexts, which might imply that we need the rule of three
-  JobContext* jobContext = (JobContext*) job;
-  jobContext->~JobContext();
+  JobState currentState;
+  getJobState (job, &currentState);
+  if (currentState.stage == REDUCE_STAGE and currentState.percentage == 100)
+  {
+    JobContext *jobContext = (JobContext *) job;
+    sem_destroy (&(jobContext->_sem));
+  }
+  else
+  {
+    waitForJob (job);
+    JobContext *jobContext = (JobContext *) job;
+    sem_destroy (&(jobContext->_sem));
+  }
 }
 
 

@@ -16,7 +16,7 @@ JobContext::JobContext (const MapReduceClient &client,
       _outputVec (outputVec),
       _multiThreadLevel (multiThreadLevel),
       _atomicIndex (0),   // Meaning stage = UNDEFINED and Counter = 0
-      _barrier (multiThreadLevel)
+      _barrier (multiThreadLevel), _wasWaitForJobCalled(false)
 {
 
   vector<IntermediateVec> shuffled;
