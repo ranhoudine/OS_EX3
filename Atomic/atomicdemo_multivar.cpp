@@ -26,7 +26,6 @@ void* count(void* arg)
         }
     }
     (*(tc->atomic_counter)) += tc->threadID % 2 << 30;
-    
     return 0;
 }
 

@@ -17,16 +17,14 @@ using std::atomic;
 using std::vector;
 using std::pair;
 
-
-
 void emit2 (K2 *key, V2 *value, void *context)
 {
   return;
 }
 void emit3 (K3 *key, V3 *value, void *context)
 {
-  OutputVec* outputVec = (OutputVec *) context;
-  outputVec->push_back (OutputPair(key, value));
+  OutputVec *outputVec = (OutputVec *) context;
+  outputVec->push_back (OutputPair (key, value));
 }
 
 JobHandle startMapReduceJob (const MapReduceClient &client,
@@ -43,11 +41,23 @@ void waitForJob (JobHandle job)
 }
 void getJobState (JobHandle job, JobState *state)
 {
-  return;
+  auto jobContext = (JobContext *) job;
+  int numOfPairs = (int) jobContext->_inputVector.size ();
+  state->stage = (stage_t) (jobContext->_atomicIndex >> 62);
+  int counter = (int) (jobContext->_atomicIndex % 1 << 31);
+  float percentage = 0; // todo we need to make sure the percentage is 0 during the undefined stage
+
+  if (state->stage != UNDEFINED_STAGE)
+  {
+    percentage = (float) (100 * counter) / (float) numOfPairs;
+  }
+  state->percentage = percentage;
 }
 void closeJobHandle (JobHandle job)
 {
-  return;
+  // todo here is where we need to deallocate the memory of the various treadContexts, which might imply that we need the rule of three
+  JobContext* jobContext = (JobContext*) job;
+  jobContext->~JobContext();
 }
 
 

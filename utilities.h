@@ -15,5 +15,5 @@ void sortIntermediateVec(IntermediateVec* vector);
 IntermediatePair popBiggest(vector<IntermediateVec> intermediates);
 int findVectorByKey(vector<IntermediateVec> queue, K2* key);
 void threadMap(ThreadContext* context);
-vector<IntermediateVec> shuffle (vector<IntermediateVec> intermediates, JobContext *jobContext);
+vector<IntermediateVec> shuffle (vector<IntermediateVec> &intermediates, JobContext *jobContext);
 #endif //_UTILITIES_H_

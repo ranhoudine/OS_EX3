@@ -12,29 +12,33 @@ using std::vector;
 using std::atomic;
 using std::pair;
 
-typedef struct ThreadContext
-{
-    JobContext* _jobContext;
-    pthread_t _threadID;
-    IntermediateVec _intermediateVector;
-} ThreadContext;
-
 class JobContext
 {
  public:
-  vector<ThreadContext *> _threads;
+  vector<IntermediateVec> _shuffled;
+  vector<ThreadContext *> _threads; // todo maybe it would be better to not use pointers here, we'll see
   const MapReduceClient &_client;
   const InputVec &_inputVector;
   Barrier _barrier;
-  OutputVec& _outputVec;
+  OutputVec &_outputVec;
   int _multiThreadLevel;
 
   JobContext (const MapReduceClient &client,
               const InputVec &inputVec, OutputVec &outputVec,
               int multiThreadLevel);
 
-  void runJob();
+  ~JobContext();
+
+  JobContext& operator=(const JobContext& job);
+  JobContext(const JobContext& job);
+  void runJob ();
 
 };
 
+typedef struct ThreadContext
+{
+    JobContext *_jobContext;
+    pthread_t _threadID;
+    IntermediateVec _intermediateVector;
+} ThreadContext;
 #endif //_JOBCONTEXT_H_
