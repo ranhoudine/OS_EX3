@@ -1,5 +1,5 @@
-#include "../MapReduceFramework.h"
-#include "../MapReduceClient.h"
+#include "MapReduceFramework.h"
+#include "MapReduceClient.h"
 #include <cstdio>
 #include <string>
 #include <array>

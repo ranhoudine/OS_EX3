@@ -1,3 +1,0 @@
-/cs/usr/ranho/CLionProjects/OS_EX3/cmake-build-debug/CMakeFiles/OS_EX3.dir
-/cs/usr/ranho/CLionProjects/OS_EX3/cmake-build-debug/CMakeFiles/edit_cache.dir
-/cs/usr/ranho/CLionProjects/OS_EX3/cmake-build-debug/CMakeFiles/rebuild_cache.dir
