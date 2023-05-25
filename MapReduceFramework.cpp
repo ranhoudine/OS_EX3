@@ -53,7 +53,7 @@ void waitForJob (JobHandle job)
   {
 
     int a = pthread_join (jobContext->_threads[i], NULL);
-    if (a!= 0)
+    if (a != 0)
     {
       std::cerr << "system error: pthread_join failed." << std::endl;
       exit (1);
@@ -88,7 +88,6 @@ void getJobState (JobHandle job, JobState *state)
       numOfPairsStage2 += tc->_intermediateVector.size ();
 
     percentage = (float) (100 * doneCount) / (float) numOfPairsStage2;
-
   }
 
   if (state->stage == REDUCE_STAGE)
@@ -112,17 +111,11 @@ void closeJobHandle (JobHandle job)
 {
   JobState currentState;
   getJobState (job, &currentState);
-  if (currentState.stage == REDUCE_STAGE and currentState.percentage == 100)
-  {
-    auto jobContext = static_cast<JobContext *>(job);
-    sem_destroy (&(jobContext->_sem));
-  }
-  else
+  if (!(currentState.stage == REDUCE_STAGE and currentState.percentage == 100))
   {
     waitForJob (job);
-    auto jobContext = static_cast<JobContext *>(job);
-    sem_destroy (&(jobContext->_sem));
   }
+  auto jobContext = static_cast<JobContext *>(job);
 }
 
 

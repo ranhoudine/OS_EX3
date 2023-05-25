@@ -7,7 +7,6 @@
 #include <vector>
 #include "ThreadContext.h"
 #include "utilities.h"
-#include <semaphore.h>
 #include <iostream>
 #include <armadillo>
 
@@ -54,7 +53,6 @@ void mapStage (ThreadContext *tContext)
 void shuffleStage (ThreadContext *tContext)
 {
   JobContext *jobContext = tContext->_jobContext;
-//  sem_t sem = jobContext->_sem;
   if (tContext->_threadID == 0)
   {
     vector<IntermediateVec> unshuffled;

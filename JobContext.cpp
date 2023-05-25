@@ -8,7 +8,6 @@
 
 #include "JobContext.h"
 #include "utilities.h"
-#include <semaphore.h>
 #include <cstdlib>
 #include <iostream>
 

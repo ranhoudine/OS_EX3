@@ -35,7 +35,6 @@ class JobContext
   atomic<uint> _atomicIndex;
   atomic<uint> _doneCount;
   atomic<uint> _stage;
-  sem_t _sem;
   bool _wasWaitForJobCalled;
   pthread_mutex_t *_waitForJobMutex;
   pthread_mutex_t *_getJobStateMutex;
