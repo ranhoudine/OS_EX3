@@ -17,7 +17,7 @@ void reduceStage (ThreadContext *tContext);
 
 bool pairComp (IntermediatePair &a, IntermediatePair &b);
 IntermediatePair popBiggestPair (vector<IntermediateVec> &intermediates);
-int findVectorByKey (vector<IntermediateVec> queue, K2 *key);
+int findVectorByKey (vector<IntermediateVec> &queue, K2 *key);
 vector<IntermediateVec> shuffle (vector<IntermediateVec> &intermediates, JobContext *jobContext);
 void eraseEmptyVectors (vector<IntermediateVec> &vectors);
 

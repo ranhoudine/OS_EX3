@@ -139,7 +139,7 @@ IntermediatePair popBiggestPair (vector<IntermediateVec> &intermediates)
 }
 /***
  * returns the index of the vector whose first pair key is @key***/
-int findVectorByKey (vector<IntermediateVec> queue, K2 *key)
+int findVectorByKey (vector<IntermediateVec> &queue, K2 *key)
 {
   K2 *curKey;
   for (int i = 0; i < queue.size (); ++i)
