@@ -171,7 +171,7 @@ void lock_mutex (pthread_mutex_t *mutex)
 {
   if (pthread_mutex_lock (mutex) != 0)
   {
-    std::cerr << "system error: on pthread_mutex_lock" << std::endl;
+    std::cout << "system error: on pthread_mutex_lock" << std::endl;
     exit (1);
   }
 }
@@ -180,7 +180,7 @@ void unlock_mutex (pthread_mutex_t *mutex)
 {
   if (pthread_mutex_unlock (mutex) != 0)
   {
-    std::cerr << "system error: on pthread_mutex_unlock" << std::endl;
+    std::cout << "system error: on pthread_mutex_unlock" << std::endl;
     exit (1);
   }
 }

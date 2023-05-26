@@ -14,12 +14,13 @@
 #include "ThreadContext.h"
 #include <semaphore.h>
 
-#define NULLIFY_MASK ((uint64_t)3 << 62)               // 11 00000 00000
 
 using std::vector;
 using std::atomic;
 using std::pair;
+
 typedef struct ThreadContext ThreadContext;
+
 class JobContext
 {
  public:
@@ -45,6 +46,7 @@ class JobContext
   JobContext (const MapReduceClient &client,
               const InputVec &inputVec, OutputVec &outputVec,
               int multiThreadLevel);
+  ~JobContext();
 
 //  JobContext &operator= (const JobContext &job);
 //  JobContext (const JobContext &job);

@@ -56,7 +56,7 @@ void waitForJob (JobHandle job)
     int a = pthread_join (jobContext->_threads[i], NULL);
     if (a != 0)
     {
-      std::cerr << "system error: pthread_join failed." << std::endl;
+      std::cout << "system error: pthread_join failed." << std::endl;
       exit (1);
     }
   }
@@ -112,11 +112,14 @@ void closeJobHandle (JobHandle job)
 {
   JobState currentState;
   getJobState (job, &currentState);
-//  if (!(currentState.stage == REDUCE_STAGE and currentState.percentage == 100.0))
-//  {
-    waitForJob (job);
-//  }
+  waitForJob (job);
   auto jobContext = static_cast<JobContext *>(job);
+  pthread_mutex_destroy (jobContext->_getJobStateMutex);
+  pthread_mutex_destroy (jobContext->_waitForJobMutex);
+  pthread_mutex_destroy (jobContext->_firstThreadMutex);
+  pthread_mutex_destroy (jobContext->_reduceStageMutex);
+
+  delete jobContext;
 }
 
 

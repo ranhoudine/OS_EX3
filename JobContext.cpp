@@ -43,6 +43,20 @@ JobContext::JobContext (const MapReduceClient &client,
 
 }
 
+JobContext::~JobContext ()
+{
+  // Clean up resources
+  for (auto *thread: _threadContexts)
+  {
+    delete thread;
+  }
+  delete[] _threads;
+  delete _waitForJobMutex;
+  delete _getJobStateMutex;
+  delete _firstThreadMutex;
+  delete _reduceStageMutex;
+}
+
 void JobContext::runJob ()
 {
   // Thread Context Creation
@@ -56,7 +70,7 @@ void JobContext::runJob ()
     int error_code = pthread_create (_threads + i, NULL, threadStartingPoint, _threadContexts.at (i));
     if (error_code != 0)
     {
-      std::cerr << "system error: pthread_create has failed." << std::endl;
+      std::cout << "system error: pthread_create has failed." << std::endl;
       exit (1);
     }
   }
@@ -123,7 +137,7 @@ uint JobContext::atomicLoad (atomic<uint> atomic)
   uint a = atomic.load () != 0;
   if (a = atomic.load () != 0) // todo understand how to check if atomic.load failed.
   {
-    std::cerr << "system error: atomic variable loading failed" << std::endl;
+    std::cout << "system error: atomic variable loading failed" << std::endl;
     exit (1);
   }
   return a;
