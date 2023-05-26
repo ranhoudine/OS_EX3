@@ -9,6 +9,8 @@ JobContext.h
 utilities.cpp
 utilities.h
 MapReduceFramework.cpp
+Barrier/Barrier.cpp
+Barrier/Barrier.h
 
 Remarks:
 

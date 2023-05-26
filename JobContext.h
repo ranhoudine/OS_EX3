@@ -8,10 +8,9 @@
 #include <vector>
 #include <atomic>
 #include <utility>
-#include "Barrier/Barrier.h"  // todo not sure whether this is allowed but
+#include "Barrier/Barrier.h"
 #include "MapReduceClient.h"
 #include "MapReduceFramework.h"
-#include "ThreadContext.h"
 #include <semaphore.h>
 
 
@@ -25,31 +24,32 @@ class JobContext
 {
  public:
   vector<IntermediateVec> _shuffled;
-  vector<ThreadContext* > _threadContexts; // todo maybe it would be better to not use pointers here, we'll see
-  pthread_t *_threads; //testing here todo
+  vector<ThreadContext* > _threadContexts;
+  pthread_t *_threads;
 
   const MapReduceClient &_client;
   InputVec _inputVector;
-  Barrier _barrier;
   OutputVec &_outputVec;
+
   int _multiThreadLevel;
+  bool _wasWaitForJobCalled;
+  int _totalPairs;
+
   atomic<uint> _atomicIndex;
   atomic<uint> _doneCount;
   atomic<uint> _stage;
-  bool _wasWaitForJobCalled;
+
+  Barrier _barrier;
   pthread_mutex_t *_waitForJobMutex;
   pthread_mutex_t *_getJobStateMutex;
   pthread_mutex_t *_firstThreadMutex;
-  pthread_mutex_t *_reduceStageMutex; // todo added this mutex
-  int _totalPairs; // todo temporary variable
+  pthread_mutex_t *_reduceStageMutex;
 
   JobContext (const MapReduceClient &client,
               const InputVec &inputVec, OutputVec &outputVec,
               int multiThreadLevel);
   ~JobContext();
 
-//  JobContext &operator= (const JobContext &job);
-//  JobContext (const JobContext &job);
   void runJob ();
 
   uint64_t getNextIndex();
@@ -58,7 +58,6 @@ class JobContext
   void nullifyCounters();
   uint getStage();
   uint getDoneCount();
-  uint atomicLoad(atomic<uint> atomic);
   void nextStage();
 
 };
@@ -69,7 +68,7 @@ typedef struct ThreadContext
     const int _threadID;
     IntermediateVec _intermediateVector;
 
-    ThreadContext(JobContext* job_context, int id, IntermediateVec vec)
+    ThreadContext(JobContext* job_context, int id, IntermediateVec &vec)
         : _jobContext(job_context),
           _threadID(id),
           _intermediateVector(vec)
