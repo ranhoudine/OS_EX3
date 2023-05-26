@@ -8,7 +8,6 @@
 #include "ThreadContext.h"
 #include "utilities.h"
 #include <iostream>
-#include <armadillo>
 
 using std::vector;
 
@@ -122,7 +121,7 @@ IntermediatePair popBiggestPair (vector<IntermediateVec> &intermediates)
   K2 *maxK = intermediates.at (0).back ().first;
   int maxVec = 0;
   K2 *curK;
-  for (int i = 1; i < intermediates.size (); ++i)
+  for (int i = 1; i < (int) intermediates.size (); ++i)
   {
     curK = intermediates.at (i).back ().first;
     if (*maxK < *curK)
@@ -142,7 +141,7 @@ IntermediatePair popBiggestPair (vector<IntermediateVec> &intermediates)
 int findVectorByKey (vector<IntermediateVec> &queue, K2 *key)
 {
   K2 *curKey;
-  for (int i = 0; i < queue.size (); ++i)
+  for (int i = 0; i < (int)queue.size (); ++i)
   {
     curKey = queue[i][0].first;
     if (!(*key < *curKey) && !(*curKey < *key))

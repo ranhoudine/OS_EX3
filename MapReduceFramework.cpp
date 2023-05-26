@@ -25,7 +25,6 @@ void emit2 (K2 *key, V2 *value, void *context)
 void emit3 (K3 *key, V3 *value, void *context)
 {
   auto tContext = static_cast<ThreadContext *>(context);
-  K3* check = key;
   tContext->_jobContext->_outputVec.push_back (OutputPair (key, value));
 }
 
