@@ -39,6 +39,7 @@ class JobContext
   pthread_mutex_t *_waitForJobMutex;
   pthread_mutex_t *_getJobStateMutex;
   pthread_mutex_t *_firstThreadMutex;
+  pthread_mutex_t *_reduceStageMutex; // todo added this mutex
   int _totalPairs; // todo temporary variable
 
   JobContext (const MapReduceClient &client,

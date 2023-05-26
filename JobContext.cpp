@@ -22,10 +22,10 @@ JobContext::JobContext (const MapReduceClient &client,
       _outputVec (outputVec),
       _multiThreadLevel (multiThreadLevel),
       _atomicIndex (0),   // Meaning stage = UNDEFINED and Counter = 0
-      _stage(0),
-      _doneCount(0),
+      _stage (0),
+      _doneCount (0),
       _barrier (multiThreadLevel), _wasWaitForJobCalled (false),
-      _waitForJobMutex (nullptr), _getJobStateMutex (nullptr), _firstThreadMutex (nullptr)
+      _waitForJobMutex (nullptr), _getJobStateMutex (nullptr), _firstThreadMutex (nullptr), _reduceStageMutex (nullptr)
 {
 
   vector<IntermediateVec> shuffled;
@@ -35,25 +35,26 @@ JobContext::JobContext (const MapReduceClient &client,
   _waitForJobMutex = new pthread_mutex_t;
   _getJobStateMutex = new pthread_mutex_t;
   _firstThreadMutex = new pthread_mutex_t;
+  _reduceStageMutex = new pthread_mutex_t;
   pthread_mutex_init (_waitForJobMutex, NULL);
   pthread_mutex_init (_getJobStateMutex, NULL);
   pthread_mutex_init (_firstThreadMutex, NULL);
+  pthread_mutex_init (_reduceStageMutex, NULL);
 
 }
 
 void JobContext::runJob ()
 {
   // Thread Context Creation
-  _threads = new pthread_t [_multiThreadLevel];
+  _threads = new pthread_t[_multiThreadLevel];
   for (pthread_t i = 0; i < (pthread_t) _multiThreadLevel; ++i)
   {
     IntermediateVec v;
 
-//    ThreadContext context = *(new ThreadContext); // todo add the handling of memory allocation failure
     auto context = new ThreadContext (this, i, v); // todo to handle malloc failure
     _threadContexts.push_back (context);
-
-    if (pthread_create (_threads + i, NULL, threadStartingPoint, _threadContexts.at (i)) != 0)
+    int error_code = pthread_create (_threads + i, NULL, threadStartingPoint, _threadContexts.at (i));
+    if (error_code != 0)
     {
       std::cerr << "system error: pthread_create has failed." << std::endl;
       exit (1);

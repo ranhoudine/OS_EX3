@@ -40,7 +40,6 @@ void mapStage (ThreadContext *tContext)
 
   while (oldVal < tContext->_jobContext->_totalPairs)
   {
-
     // oldVal contains the index of the pair to be processed
     K1 *key = tContext->_jobContext->_inputVector.at (oldVal).first;
     V1 *val = tContext->_jobContext->_inputVector.at (oldVal).second;
@@ -55,49 +54,29 @@ void shuffleStage (ThreadContext *tContext)
   JobContext *jobContext = tContext->_jobContext;
   if (tContext->_threadID == 0)
   {
-    vector<IntermediateVec> unshuffled;
+    vector<IntermediateVec> unshuffledIntermediateVectors; // a vector to store the threads' vectors before shuffling
 
-    jobContext->nextStage();
+    jobContext->nextStage ();
 
     for (ThreadContext *tc: jobContext->_threadContexts)
-      unshuffled.push_back (tc->_intermediateVector);
+      unshuffledIntermediateVectors.push_back (tc->_intermediateVector);
 
-    jobContext->_shuffled = shuffle (unshuffled, jobContext);
+    jobContext->_shuffled = shuffle (unshuffledIntermediateVectors, jobContext);
 
-    jobContext->nextStage();
+    jobContext->nextStage ();
 
   }
-  jobContext->_barrier.barrier();
+  jobContext->_barrier.barrier ();
 }
 
-void reduceStage (ThreadContext *tContext)
-{
-  JobContext *jobContext = tContext->_jobContext;
-
-  uint64_t oldVal = jobContext->getNextIndex ();
-
-  while (oldVal < jobContext->_shuffled.size ())
-  {
-    IntermediateVec *curVec = &(jobContext->_shuffled.at (oldVal));
-    jobContext->_client.reduce (curVec, tContext);
-    tContext->_jobContext->incDoneCount ();
-    oldVal = jobContext->getNextIndex ();
-  }
-}
-
-bool pairComp (IntermediatePair &a, IntermediatePair &b)    // Used in sort
-{
-  return a.first < b.first;
-}
-
-vector<IntermediateVec> shuffle (vector<IntermediateVec> &intermediates, JobContext *jobContext)
-{
+vector<IntermediateVec> shuffle (vector<IntermediateVec> &unshuffledIntermediateVectors, JobContext *jobContext)
+{ // todo: the only change to manatanyas implementation is the renaming of unshuffled to unshuffledIntermediateVectors
   vector<IntermediateVec> queue;
   int v;
-  eraseEmptyVectors (intermediates);
-  while (!intermediates.empty ())
-  {
-    IntermediatePair currentPair = popBiggestPair (intermediates);
+  eraseEmptyVectors (unshuffledIntermediateVectors);
+  while (!unshuffledIntermediateVectors.empty ())
+  { // popBiggestPair deletes an empty vector from the unshuffled vectors if it gets emptied
+    IntermediatePair currentPair = popBiggestPair (unshuffledIntermediateVectors);
     v = findVectorByKey (queue, currentPair.first);
     if (v == -1)
     {
@@ -112,6 +91,29 @@ vector<IntermediateVec> shuffle (vector<IntermediateVec> &intermediates, JobCont
     jobContext->getNextIndex ();
   }
   return queue;
+}
+
+void reduceStage (ThreadContext *tContext)
+{
+  JobContext *jobContext = tContext->_jobContext;
+
+  uint64_t oldVal = jobContext->getNextIndex ();
+
+  while (oldVal < jobContext->_shuffled.size ())
+  {
+    IntermediateVec *curVec = &(jobContext->_shuffled.at (oldVal));
+    lock_mutex (jobContext->_reduceStageMutex); // todo added this mutex
+    jobContext->_client.reduce (curVec, tContext);
+    unlock_mutex (jobContext->_reduceStageMutex); // todo same here
+    tContext->_jobContext->incDoneCount ();
+    oldVal = jobContext->getNextIndex ();
+
+  }
+}
+
+bool pairComp (IntermediatePair &a, IntermediatePair &b)    // Used in sort
+{
+  return a.first < b.first;
 }
 
 IntermediatePair popBiggestPair (vector<IntermediateVec> &intermediates)
@@ -135,7 +137,8 @@ IntermediatePair popBiggestPair (vector<IntermediateVec> &intermediates)
     intermediates.erase (intermediates.begin () + maxVec);
   return maxPair;
 }
-
+/***
+ * returns the index of the vector whose first pair key is @key***/
 int findVectorByKey (vector<IntermediateVec> queue, K2 *key)
 {
   K2 *curKey;
@@ -181,7 +184,5 @@ void unlock_mutex (pthread_mutex_t *mutex)
     exit (1);
   }
 }
-
-
 
 #endif
