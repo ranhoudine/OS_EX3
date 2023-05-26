@@ -5,7 +5,6 @@
 
 #include <algorithm>
 #include <vector>
-#include "ThreadContext.h"
 #include "utilities.h"
 #include <iostream>
 

@@ -17,21 +17,23 @@ using std::atomic;
 JobContext::JobContext(const MapReduceClient &client,
                        const InputVec &inputVec, OutputVec &outputVec,
                        int multiThreadLevel)
-        : _client(client),
+        : _threads(nullptr),
+          _client(client),
           _inputVector(inputVec),
           _outputVec(outputVec),
           _multiThreadLevel(multiThreadLevel),
+          _wasWaitForJobCalled(false),
+          _totalPairs((int) inputVec.size()),
           _atomicIndex(0),   // Meaning stage = UNDEFINED and Counter = 0
-          _stage(0),
-          _threads(nullptr),
           _doneCount(0),
-          _barrier(multiThreadLevel), _wasWaitForJobCalled(false),
-          _waitForJobMutex(nullptr), _getJobStateMutex(nullptr), _firstThreadMutex(nullptr),
-          _reduceStageMutex(nullptr) {
+          _stage(0),
+          _barrier(multiThreadLevel),
+          _waitForJobMutex(nullptr), _getJobStateMutex(nullptr),
+          _firstThreadMutex(nullptr), _reduceStageMutex(nullptr)
+          {
 
     vector<IntermediateVec> shuffled;
     this->_shuffled = shuffled;
-    _totalPairs = (int) inputVec.size();
     _threads = new pthread_t[_multiThreadLevel];
 
     _waitForJobMutex = new pthread_mutex_t;
